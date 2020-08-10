@@ -2,6 +2,7 @@
 Simple graph implementation
 """
 from util import Stack, Queue  # These may come in handy
+from collections import deque
 
 class Graph:
 
@@ -41,14 +42,40 @@ class Graph:
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        q = deque() # Used deque because popleft is O(1) instead of the Queue (which is O(n))
+        visited = set()
+
+        q.append(starting_vertex)
+
+        while len(q) > 0:
+            vertex = q.popleft()
+
+            if vertex not in visited:
+                visited.add(vertex)
+                
+                for neighbor in self.get_neighbors(vertex):
+                    q.append(neighbor)
+                print(vertex) # This is what the test is looking for (I was just using it to debug, so I had an extra string in there to find it easily)
 
     def dft(self, starting_vertex):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        s = deque()
+        visited = set()
+
+        s.append(starting_vertex)
+
+        while len(s) > 0: 
+            vertex = s.pop()
+
+            if vertex not in visited: 
+                visited.add(vertex)
+
+                for neighbor in self.get_neighbors(vertex):
+                    s.append(neighbor)
+                print(vertex)
 
     def dft_recursive(self, starting_vertex):
         """
@@ -57,7 +84,17 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        visited = set()
+
+        def inner_recursion(starting_vertex):
+            if starting_vertex not in visited:
+                visited.add(starting_vertex)
+                neighbors = self.get_neighbors(starting_vertex)
+
+                print(starting_vertex)        
+                for neighbor in neighbors:
+                    inner_recursion(neighbor)
+        return inner_recursion(starting_vertex)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -128,7 +165,7 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 6, 5
         1, 2, 4, 3, 7, 5, 6
     '''
-    # graph.bft(1)
+    graph.bft(1)
 
     '''
     Valid DFT paths:
@@ -137,8 +174,8 @@ if __name__ == '__main__':
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
-    # graph.dft(1)
-    # graph.dft_recursive(1)
+    graph.dft(1)
+    graph.dft_recursive(1)
 
     '''
     Valid BFS path:

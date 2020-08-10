@@ -1,5 +1,5 @@
 
-# Note: This Queue class is sub-optimal. Why?
+# Note: This Queue class is sub-optimal. Why? Because popping the element at the 0-index is an O(n) operation (since all other elements have to be shifted over)
 class Queue():
     def __init__(self):
         self.queue = []
