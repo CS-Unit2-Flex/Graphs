@@ -1,7 +1,7 @@
 """
 Simple graph implementation
 """
-from util_copy import Stack, Queue  # These may come in handy
+# from util_copy import Stack, Queue  # These may come in handy
 from collections import deque
 
 class Graph:
@@ -16,8 +16,8 @@ class Graph:
         """
         if vertex_id not in self.vertices:
             self.vertices[vertex_id] = set()
-        else:
-            raise IndexError("this index already exists")
+        # else:
+        #     raise IndexError("this index already exists")
 
     def add_edge(self, v1, v2):
         """
