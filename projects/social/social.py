@@ -1,3 +1,5 @@
+import random 
+from collections import deque
 class User:
     def __init__(self, name):
         self.name = name
@@ -44,9 +46,24 @@ class SocialGraph:
         self.friendships = {}
         # !!!! IMPLEMENT ME
 
-        # Add users
+        num_of_friendship_calls = 0
 
+        # Add users
+        [self.add_user(f"User {i}") for i in range(num_users)]
         # Create friendships
+        possible_friendships = []
+
+        [[possible_friendships.append((user_id, friend_id)) for friend_id in range(user_id + 1, self.last_id + 1)] for user_id in self.users]
+
+        random.shuffle(possible_friendships)
+
+        # [(friendship = possible_friendships[i], self.add_friendship(friendship[0], friendship[1])) for i in range(num_users * avg_friendships // 2)]
+        for i in range(num_users * avg_friendships // 2 ):
+            friendship = possible_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
+            num_of_friendship_calls += 1
+        print(f"Friendship Calls: {num_of_friendship_calls}")
+
 
     def get_all_social_paths(self, user_id):
         """
@@ -57,14 +74,38 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
+        # pass
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
+        q = deque()
+        q.append([user_id])
+
+
+
+        while len(q) > 0:
+            path = q.popleft()
+
+            user = path[-1]
+
+            if user not in visited:
+                visited[user] = path
+                
+                for friend in self.friendships[user]:
+                    path_copy = list(path)
+                    path_copy.append(friend)
+                    q.append(path_copy)
+
+        network_percentages = len(visited) / len(self.users) 
+        print(f"Network Percentage: {network_percentages}")
+
         return visited
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
-    sg.populate_graph(10, 2)
+    # sg.populate_graph(10, 2)
+    # sg.populate_graph(100, 10) # For question 1
+    sg.populate_graph(1000, 5)
     print(sg.friendships)
     connections = sg.get_all_social_paths(1)
     print(connections)
