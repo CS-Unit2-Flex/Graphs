@@ -44,6 +44,7 @@ opposites = {'n' : 's',
 reverse_path = []
 
 rooms_with_unexplored_directions = []
+length_of_unknown = len(rooms_with_unexplored_directions)
 
 def dft(room):
     # Pick a random room
@@ -54,7 +55,6 @@ def dft(room):
     if len(reverse_path) > 0 and len(exits) > 1:
         if next_direction == reverse_path[-1]:
             next_direction = exits[1]
-
 
     s = deque()
     s.append(next_direction)
@@ -78,8 +78,8 @@ def dft(room):
     elif len(rooms_with_unexplored_directions) > 1:
         last_unknown = rooms_with_unexplored_directions[-1]
 
-    length_of_unknown = len(rooms_with_unexplored_directions)
 
+    print(f"Stack: {s}")
     while len(s) > 0:
         # direction for the player to travel next
         r = s.pop()
@@ -97,6 +97,7 @@ def dft(room):
                     continue
                 else:
                     visited[room.id][opposites.get(traversal_path[-2])] = last_room
+                    visited[last_room][traversal_path[-2]] = room.id
                 if isinstance(traversal_path[-2], int):
                     continue
                 else:
@@ -105,13 +106,13 @@ def dft(room):
             if len(exits) <= 1:
                 return bfs(room, length_of_unknown)
             player.travel(next_direction)
-        else:
-            print('hello :D ')
-            if len(traversal_path) > 1:
-                if isinstance(opposites.get(traversal_path[-2]), int):
-                    continue
-                else:
-                    visited[room.id][opposites.get(traversal_path[-2])] = last_room
+        # else:
+        #     print('hello :D ')
+        #     if len(traversal_path) > 1:
+        #         if isinstance(opposites.get(traversal_path[-2]), int):
+        #             continue
+        #         else:
+        #             visited[room.id][opposites.get(traversal_path[-2])] = last_room
 
         # If we hit a dead-end, do the breadth-first search
 
@@ -121,16 +122,13 @@ def dft(room):
 
 def bfs(room, length_of_unknown): 
     print(f"WE MADE IT HERE!!!!!")
-    stop = False
-    if past_rooms[-1] == rooms_with_unexplored_directions[-1]:
-        stop = True
-    while len(reverse_path) >= length_of_unknown:
+    print(reverse_path)
+    while len(reverse_path) > length_of_unknown:
         next_direction = reverse_path.pop()
         # past_rooms.pop()
         player.travel(next_direction)
         # past_rooms.append(room.id)
         traversal_path.append(next_direction)
-
 
 
 
@@ -140,12 +138,21 @@ while r < 20:
     print(rooms_with_unexplored_directions, 'unexplored')
     player.current_room.print_room_description(player)
 
-    last_direction = dft(player.current_room)
+    # dft(player.current_room)
 
-    last_unknown = rooms_with_unexplored_directions[-1]
+    # last_unknown = rooms_with_unexplored_directions[-1]
 
-    if player.current_room.id == last_unknown:
+    # Updates last room when loop is entered
+    if player.current_room.id not in visited:
         dft(player.current_room)
+    else:
+        if len(traversal_path) > 0:
+            if player.current_room.id == rooms_with_unexplored_directions[-1]:
+                visited[past_rooms[-1]][traversal_path[-1]] = player.current_room.id
+                bfs(player.current_room, length_of_unknown)
+
+        dft(player.current_room)
+        visited[past_rooms[-1]][traversal_path[-1]] = player.current_room.id
 
     for room in rooms_with_unexplored_directions:
         if '?' in visited[room].values():
