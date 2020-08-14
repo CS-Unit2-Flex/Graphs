@@ -43,11 +43,7 @@ opposites = {'n' : 's',
 
 reverse_path = []
 
-rooms_with_unexplored_directions = deque()
-
-def pick_random_room(l):
-    random.shuffle(l)
-    return l[0]
+rooms_with_unexplored_directions = []
 
 def dft(room):
     # Pick a random room
@@ -110,7 +106,12 @@ def dft(room):
                 return bfs(room, length_of_unknown)
             player.travel(next_direction)
         else:
-            continue
+            print('hello :D ')
+            if len(traversal_path) > 1:
+                if isinstance(opposites.get(traversal_path[-2]), int):
+                    continue
+                else:
+                    visited[room.id][opposites.get(traversal_path[-2])] = last_room
 
         # If we hit a dead-end, do the breadth-first search
 
@@ -123,9 +124,9 @@ def bfs(room, length_of_unknown):
     stop = False
     if past_rooms[-1] == rooms_with_unexplored_directions[-1]:
         stop = True
-    while len(past_rooms) > 0:
+    while len(reverse_path) >= length_of_unknown:
         next_direction = reverse_path.pop()
-        past_rooms.pop()
+        # past_rooms.pop()
         player.travel(next_direction)
         # past_rooms.append(room.id)
         traversal_path.append(next_direction)
@@ -136,6 +137,7 @@ def bfs(room, length_of_unknown):
 r = 0
 while r < 20:
 # while len(visited) < len(room_graph):
+    print(rooms_with_unexplored_directions, 'unexplored')
     player.current_room.print_room_description(player)
 
     last_direction = dft(player.current_room)
